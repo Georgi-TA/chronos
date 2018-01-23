@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Chronos</string>
+    <string name="cd_call_log_image">Call log image</string>
 </resources>
