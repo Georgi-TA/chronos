@@ -37,11 +37,11 @@ class CallLogAdapter() : RecyclerView.Adapter<CallLogAdapter.CallLogVH> () {
             if (item.photo != null)
                 Picasso.with(itemView.context)
                     .load(item.photo)
-                    .resize(64, 64)
+                    .resize(200, 200)
                     .centerCrop()
                     .into(itemView.call_log_image)
 
-            itemView.call_log_date.text = DateUtils.getRelativeTimeSpanString(item.timestamp, System.currentTimeMillis() / 1000, DateUtils.DAY_IN_MILLIS)
+            itemView.call_log_date.text = DateUtils.getRelativeTimeSpanString(item.timestamp, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS)
         }
     }
 

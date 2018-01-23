@@ -12,6 +12,9 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import android.content.ContentUris
+
+
 
 class MainActivity : AppCompatActivity() {
     private val REQUEST_READ_CALL_LOG = 15151
@@ -56,13 +59,15 @@ class MainActivity : AppCompatActivity() {
                                             c.getLong(c.getColumnIndex(CallLog.Calls.DATE)))
 
                     // Query for Photo if possible
-                    val contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(item.number))
+                    val contactLookupCursor = contentResolver.query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, item.number), arrayOf(ContactsContract.PhoneLookup._ID), null, null, null)
+                    if(contactLookupCursor.moveToFirst()) {
+                        val contactId = contactLookupCursor.getLong(contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID))
+                        contactLookupCursor.close()
+                        val contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId)
+                        item.photo = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY)
+                    }
 
-                    // querying contact data store
-//                    val phones = contentResolver.query(contactUri, arrayOf(ContactsContract.PhoneLookup.PHOTO_URI), null, null, null)
-//                    item.photo = Uri.parse(phones.getString(phones.getColumnIndex(ContactsContract.PhoneLookup.PHOTO_URI)))
-//                    phones.close()
-
+                    // add the item to the list of call logs
                     data.add(item)
 
                     // move to the next call log
